@@ -96,7 +96,7 @@ print_r( $ret );
 PYTHON版:
 
 ```python
-    import json,requests
+import json,requests
 def send_to_wecom(text,wecom_cid,wecom_secret,wecom_aid,wecom_touid='@all'):
     get_token_url = f"https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid={wecom_cid}&corpsecret={wecom_secret}"
     response = requests.get(get_token_url).content
@@ -131,12 +131,12 @@ print( ret );
 
 ## 注解
 出现`接口请求正常，企业微信接受消息正常，个人微信无法收到消息`：
+
 1. 进入「我的企业」 → 「[微信插件](https://work.weixin.qq.com/wework_admin/frame#profile/wxPlugin)」，拉到最下方，勾选 “允许成员在微信插件中接收和回复聊天消息”
-[1622527548856 - IMGBED (图床)](https://www.imgbed.com/image/1622527548856.HPIRU)
+![](https://img.ams1.imgbed.xyz/2021/06/01/HPIRU.jpg)
+
 2. 在企业微信客户端 「我」 → 「设置」  → 「新消息通知」中关闭 “仅在企业微信中接受消息” 限制条件
-[IMG 4753 - IMGBED (图床)](https://www.imgbed.com/image/img-4753.HPKPX)
-
-
+![](https://img.ams1.imgbed.xyz/2021/06/01/HPKPX.jpg)
 
 
 
