@@ -93,6 +93,50 @@ $ret = send_to_wecom("推送测试\r\n测试换行", "企业ID③", "应用ID①
 print_r( $ret );
 ```
 
+PYTHON版:
+
+```python
+import json,requests
+def send_to_wecom(text,wecom_cid,wecom_secret,wecom_aid,wecom_touid='@all'):
+    get_token_url = f"https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid={wecom_cid}&corpsecret={wecom_secret}"
+    response = requests.get(get_token_url).content
+    access_token = json.loads(response).get('access_token')
+    if access_token and len(access_token) > 0:
+        send_msg_url = f'https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token={access_token}'
+        data = {
+            "touser":wecom_touid,
+            "agentid":wecom_aid,
+            "msgtype":"text",
+            "text":{
+                "content":text
+            },
+            "duplicate_check_interval":600
+        }
+        response = requests.post(send_msg_url,data=json.dumps(data)).content
+        return response
+    else:
+        return False
+
+```
+
+使用实例：
+
+```python
+ret = send_to_wecom("推送测试\r\n测试换行", "企业ID③", "应用ID①", "应用secret②");
+print( ret );
+```
+
 其他版本的函数可参照上边的逻辑自行编写，欢迎PR。
+
+
+## 注解
+出现`接口请求正常，企业微信接受消息正常，个人微信无法收到消息`：
+
+1. 进入「我的企业」 → 「[微信插件](https://work.weixin.qq.com/wework_admin/frame#profile/wxPlugin)」，拉到最下方，勾选 “允许成员在微信插件中接收和回复聊天消息”
+![](https://img.ams1.imgbed.xyz/2021/06/01/HPIRU.jpg)
+
+2. 在企业微信客户端 「我」 → 「设置」  → 「新消息通知」中关闭 “仅在企业微信中接受消息” 限制条件
+![](https://img.ams1.imgbed.xyz/2021/06/01/HPKPX.jpg)
+
 
 
