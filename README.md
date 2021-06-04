@@ -126,6 +126,56 @@ ret = send_to_wecom("推送测试\r\n测试换行", "企业ID③", "应用ID①"
 print( ret );
 ```
 
+TypeScript 版:
+
+```typescript
+import request from 'superagent'
+
+async function sendToWecom(body: {
+  text: string
+  wecomCId: string
+  wecomSecret: string
+  wecomAgentId: string
+  wecomTouid?: string
+}): Promise<{ errcode: number; errmsg: string; invaliduser: string }> {
+  body.wecomTouid = body.wecomTouid ?? '@all'
+  const getTokenUrl = `https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=${body.wecomCId}&corpsecret=${body.wecomSecret}`
+  const getTokenRes = await request.get(getTokenUrl)
+  const accessToken = getTokenRes.body.access_token
+  if (accessToken?.length <= 0) {
+    throw new Error('获取 accessToken 失败')
+  }
+  const sendMsgUrl = `https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token=${accessToken}`
+  const sendMsgRes = await request.post(sendMsgUrl).send({
+    touser: body.wecomTouid,
+    agentid: body.wecomAgentId,
+    msgtype: 'text',
+    text: {
+      content: body.text,
+    },
+    duplicate_check_interval: 600,
+  })
+  return sendMsgRes.body
+}
+```
+
+使用实例：
+
+```typescript
+sendToWecom({
+  text: '推送测试\r\n测试换行',
+  wecomAgentId: '应用ID①',
+  wecomSecret: '应用secret②',
+  wecomCId: '企业ID③',
+})
+  .then((res) => {
+    console.log(res)
+  })
+  .catch((err) => {
+    console.log(err)
+  })
+```
+
 其他版本的函数可参照上边的逻辑自行编写，欢迎PR。
 
 
