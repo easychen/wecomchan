@@ -1,6 +1,10 @@
 # Wecom酱
 
-通过企业微信向微信推送消息(配置说明&推送函数)。
+通过企业微信向微信推送消息的解决方案。包括：
+
+1. 配置说明（本页下方）
+2. 推送函数（支持多种语言，见本页下方）
+3. 自行搭建的在线服务源码 [查看搭建说明](ONLINE.md)
 
 ## 企业微信应用消息配置说明
 
@@ -45,6 +49,14 @@ PS：消息接口无需认证即可使用，个人用微信就可以注册
 进入「我的企业」 → 「[微信插件](https://work.weixin.qq.com/wework_admin/frame#profile/wxPlugin)」，拉到下边扫描二维码，关注以后即可收到推送的消息。
 
 ![](https://theseven.ftqq.com/20210208144808.png)
+
+PS：如果出现`接口请求正常，企业微信接受消息正常，个人微信无法收到消息`的情况：
+
+1. 进入「我的企业」 → 「[微信插件](https://work.weixin.qq.com/wework_admin/frame#profile/wxPlugin)」，拉到最下方，勾选 “允许成员在微信插件中接收和回复聊天消息”
+![](https://img.ams1.imgbed.xyz/2021/06/01/HPIRU.jpg)
+
+2. 在企业微信客户端 「我」 → 「设置」  → 「新消息通知」中关闭 “仅在企业微信中接受消息” 限制条件
+![](https://img.ams1.imgbed.xyz/2021/06/01/HPKPX.jpg)
 
 #### 第五步，通过以下函数发送消息：
 
@@ -179,14 +191,7 @@ sendToWecom({
 其他版本的函数可参照上边的逻辑自行编写，欢迎PR。
 
 
-## 注解
-出现`接口请求正常，企业微信接受消息正常，个人微信无法收到消息`：
 
-1. 进入「我的企业」 → 「[微信插件](https://work.weixin.qq.com/wework_admin/frame#profile/wxPlugin)」，拉到最下方，勾选 “允许成员在微信插件中接收和回复聊天消息”
-![](https://img.ams1.imgbed.xyz/2021/06/01/HPIRU.jpg)
-
-2. 在企业微信客户端 「我」 → 「设置」  → 「新消息通知」中关闭 “仅在企业微信中接受消息” 限制条件
-![](https://img.ams1.imgbed.xyz/2021/06/01/HPKPX.jpg)
 
 
 
