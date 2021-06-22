@@ -1,6 +1,6 @@
 # qywxPush
 
-*另一个*企业微信向微信推送消息的PHP版本。这个是一直自用，也贡献出来吧，大家自行选用。
+**另一个**企业微信向微信推送消息的PHP版本。这个是一直自用，也贡献出来吧，大家自行选用。
 
 相对于 [easychen的PHP版本](https://github.com/easychen/wecomchan/blob/main/index.php) 有以下区别：
 
@@ -32,7 +32,7 @@ if( !empty($_REQUEST['text']) ){
 // class 略…
 ```
 
-通过 `http://指向运行环境的域名/?text=你要发送的内容` 发送内容，可选项 `&touser=接收人&desp=标题内容效果` 。
+通过 `http://指向运行环境的域名/?text=你要发送的内容` 发送内容，可选项：`&touser=接收人&desp=【标题】内容效果` 
 
 ## 其它参考教程
 
