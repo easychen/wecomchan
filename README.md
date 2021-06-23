@@ -1,6 +1,10 @@
 # Wecom酱
 
-通过企业微信向微信推送消息(配置说明&推送函数)。
+通过企业微信向微信推送消息的解决方案。包括：
+
+1. 配置说明（本页下方）
+2. 推送函数（支持多种语言，见本页下方）
+3. 自行搭建的在线服务源码 [查看搭建说明](ONLINE.md)
 
 ## 企业微信应用消息配置说明
 
@@ -46,7 +50,17 @@ PS：消息接口无需认证即可使用，个人用微信就可以注册
 
 ![](https://theseven.ftqq.com/20210208144808.png)
 
+PS：如果出现`接口请求正常，企业微信接受消息正常，个人微信无法收到消息`的情况：
+
+1. 进入「我的企业」 → 「[微信插件](https://work.weixin.qq.com/wework_admin/frame#profile/wxPlugin)」，拉到最下方，勾选 “允许成员在微信插件中接收和回复聊天消息”
+![](https://img.ams1.imgbed.xyz/2021/06/01/HPIRU.jpg)
+
+2. 在企业微信客户端 「我」 → 「设置」  → 「新消息通知」中关闭 “仅在企业微信中接受消息” 限制条件
+![](https://img.ams1.imgbed.xyz/2021/06/01/HPKPX.jpg)
+
 #### 第五步，通过以下函数发送消息：
+
+PS：为使用方便，以下函数没有对 `access_token` 进行缓存。对于个人低频调用已经够用。带缓存的实现可查看 `index.php` 中的示例代码（依赖Redis实现）。
 
 PHP版：
 
@@ -176,17 +190,77 @@ sendToWecom({
   })
 ```
 
+.NET Core 版:
+
+```C#
+using System;
+using RestSharp;
+using Newtonsoft.Json;
+namespace WeCom.Demo
+{
+    class WeCom
+    {   
+        public  string SendToWeCom(
+            string text,// 推送消息
+            string weComCId,// 企业Id①
+            string weComSecret,// 应用secret②
+            string weComAId,// 应用ID③
+            string weComTouId = "@all")
+        {
+            // 获取Token
+            string getTokenUrl = $"https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid={weComCId}&corpsecret={weComSecret}";
+            string token = JsonConvert
+            .DeserializeObject<dynamic>(new RestClient(getTokenUrl)
+            .Get(new RestRequest()).Content).access_token;
+            System.Console.WriteLine(token);
+            if (!String.IsNullOrWhiteSpace(token))
+            {
+                var request = new RestRequest();
+                var client = new RestClient($"https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token={token}");
+                var data = new
+                {
+                    touser = weComTouId,
+                    agentid = weComAId,
+                    msgtype = "text",
+                    text = new
+                    {
+                        content = text
+                    },
+                    duplicate_check_interval = 600
+                };
+                string serJson = JsonConvert.SerializeObject(data);
+                System.Console.WriteLine(serJson);
+                request.Method = Method.POST;
+                request.AddHeader("Accept", "application/json");
+                request.Parameters.Clear();
+                request.AddParameter("application/json", serJson, ParameterType.RequestBody);
+                return client.Execute(request).Content;
+            }
+            return "-1";
+        }
+}
+
+
+```
+使用实例:
+```C#
+   static void Main(string[] args)
+        {   // 测试
+            Console.Write(new WeCom().SendToWeCom(
+            "msginfo",
+            "企业Id①"
+            , "应用secret②",
+            "应用ID③"
+            ));
+        }
+
+    }
+```
+
 其他版本的函数可参照上边的逻辑自行编写，欢迎PR。
 
 
-## 注解
-出现`接口请求正常，企业微信接受消息正常，个人微信无法收到消息`：
 
-1. 进入「我的企业」 → 「[微信插件](https://work.weixin.qq.com/wework_admin/frame#profile/wxPlugin)」，拉到最下方，勾选 “允许成员在微信插件中接收和回复聊天消息”
-![](https://img.ams1.imgbed.xyz/2021/06/01/HPIRU.jpg)
-
-2. 在企业微信客户端 「我」 → 「设置」  → 「新消息通知」中关闭 “仅在企业微信中接受消息” 限制条件
-![](https://img.ams1.imgbed.xyz/2021/06/01/HPKPX.jpg)
 
 
 
