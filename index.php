@@ -77,7 +77,7 @@ function send_to_wecom($text, $wecom_cid, $wecom_secret, $wecom_aid, $wecom_toui
         
         $response = curl_exec($ch);
         if ($response !== false && REDIS_ON) {
-            redis()->set(REDIS_KEY, $access_token, REDIS_EXPIRED);
+            redis()->set(REDIS_KEY, $access_token, ['nx', 'ex'=>REDIS_EXPIRED]);
         }
         return $response;
     }
