@@ -113,7 +113,7 @@ PYTHON版:
 
 ```python
 import json,requests
-def send_to_wecom(text,wecom_cid,wecom_secret,wecom_aid,wecom_touid='@all'):
+def send_to_wecom(text,wecom_cid,wecom_aid,wecom_secret,wecom_touid='@all'):
     get_token_url = f"https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid={wecom_cid}&corpsecret={wecom_secret}"
     response = requests.get(get_token_url).content
     access_token = json.loads(response).get('access_token')
