@@ -4,9 +4,12 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
+							   
 	"io/ioutil"
 	"log"
 	"net/http"
+	"reflect"
 	"time"
 
 	"github.com/go-redis/redis/v8"
@@ -51,7 +54,7 @@ func redis_client() *redis.Client {
 	rdb := redis.NewClient(&redis.Options{
 		Addr:     REDIS_ADDR,
 		Password: "", // no password set
-		DB:       8,  // use default DB
+		DB:       0,  // use default DB
 	})
 	return rdb
 }
@@ -92,15 +95,23 @@ func post_msg(text_msg, msg_type, post_url string) string {
 	return string(body)
 }
 
+func IsZero(v interface{}) (bool, error) {
+	t := reflect.TypeOf(v)
+	if !t.Comparable() {
+		return false, fmt.Errorf("type is not comparable: %v", t)
+	}
+	return v == reflect.Zero(t).Interface(), nil
+}
+
 func main() {
 	var access_token string
 	if redis_stat == "ON" {
+		log.Println("从redis获取token")
 		rdb := redis_client()
 		vals, err := rdb.Get(ctx, "access_token").Result()
-		if err != redis.Nil {
-			log.Println(err)
+		if err == redis.Nil {
+			log.Println("access_token does not exist")
 		}
-		log.Println("从redis获取token")
 		access_token = string(vals)
 	}
 	if access_token == "" {
@@ -119,13 +130,19 @@ func main() {
 		log.Println(post_status)
 		post_response := praser_json(string(post_status))
 		log.Println(post_response)
-		if post_response["errmsg"] == "ok" && redis_stat == "ON" {
-			log.Println("pre to set redis key")
-			rdb := redis_client()
-			set, err := rdb.SetEX(ctx, "access_token", access_token, 7000*time.Second).Result()
-			log.Println(set)
-			if err != redis.Nil {
-				log.Println(err)
+		errcode := post_response["errcode"]
+		ok, err := IsZero(errcode)
+		if err != nil {
+			fmt.Printf("%v", err)
+		} else {
+			if ok && redis_stat == "ON" {
+				log.Println("pre to set redis key")
+				rdb := redis_client()
+				set, err := rdb.SetNX(ctx, "access_token", access_token, 7000*time.Second).Result()
+				log.Println(set)
+				if err != nil {
+					log.Println(err)
+				}
 			}
 		}
 	}
