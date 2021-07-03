@@ -8,6 +8,12 @@
    1. [PHP版搭建说明](ONLINE.md) 
    2. [Go版说明](go-wecomchan/README.md)
 
+## 🎈 本项目属于方糖推送生态。该生态包含项目如下：
+
+- [Server酱Turbo](https://sct.ftqq.com)：支持企业微信、微信服务号、钉钉、飞书群机器人等多通道的在线服务，无需搭建直接使用，每天有免费额度
+- [Wecom酱](https://github.com/easychen/wecomchan)：通过企业微信推送消息到微信的消息推送函数和在线服务方案，开源免费，可自己搭建。支持多语言。
+- [Tele酱](https://github.com/easychen/telechan)：可以通过 Vercel 免费部署，且部署后 API 在国内网络可访问的 Telegram 多账户消息推送机器人
+
 ## 企业微信应用消息配置说明
 
 优点：
