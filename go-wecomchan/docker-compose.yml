@@ -1,0 +1,37 @@
+version: '3'
+
+services:
+  go-wecomchan:
+    image: docker.io/aozakiaoko/go-wecomchan:latest
+    environment:
+      - SENDKEY=发送时用来验证的key
+      - WECOM_CID=企业微信公司ID
+      - WECOM_SECRET=企业微信应用Secret
+      - WECOM_AID=企业微信应用ID
+      - WECOM_TOUID=@all
+      - REDIS_STAT=ON
+      - REDIS_ADDR=redis:6379
+      - REDIS_PASSWORD=redis的连接密码
+    ports:
+      - 8080:8080
+    networks:
+      - go-wecomchan
+    depends_on:
+      - redis
+
+  redis:
+    image: docker.io/bitnami/redis:6.2
+    environment:
+      - REDIS_PASSWORD=redis的连接密码
+      - REDIS_DISABLE_COMMANDS=FLUSHDB,FLUSHALL
+    networks:
+      - go-wecomchan
+    volumes:
+      - 'redis_data:/bitnami/redis/data'
+
+volumes:
+  redis_data:
+    driver: local
+
+networks:
+  go-wecomchan:
