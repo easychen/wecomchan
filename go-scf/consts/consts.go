@@ -1,11 +1,12 @@
 package consts
 
-const (
-	SENDKEY      = "set_a_sendkey"
-	WECOM_CID    = "企业微信公司ID"
-	WECOM_SECRET = "企业微信应用Secret"
-	WECOM_AID    = "企业微信应用ID"
-	WECOM_TOUID  = "@all"
+var (
+	FUNC_NAME    string
+	SEND_KEY     string
+	WECOM_CID    string
+	WECOM_SECRET string
+	WECOM_AID    string
+	WECOM_TOUID  string
 )
 
 // 微信发消息API

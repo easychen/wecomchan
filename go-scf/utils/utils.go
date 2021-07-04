@@ -10,7 +10,6 @@ func MarshalToStringParam(param interface{}) string {
 	return s
 }
 
-
 func MakeResp(code int, msg string) map[string]interface{} {
 	return map[string]interface{}{
 		"code": code,

@@ -17,18 +17,18 @@ import (
 )
 
 func WeComChanService(ctx context.Context, event events.APIGatewayRequest) interface{} {
-	accessToken, err := getAccessToken()
-	if err != nil {
-		return utils.MakeResp(-1, "get accessToken error")
-	}
 	sendKey := getQuery("sendkey", event.QueryString)
 	msgType := getQuery("msg_type", event.QueryString)
 	msg := getQuery("msg", event.QueryString)
-	if accessToken == "" || msgType == "" || msg == "" {
+	if msgType == "" || msg == "" {
 		return utils.MakeResp(-1, "param error")
 	}
-	if sendKey != consts.SENDKEY {
+	if sendKey != consts.SEND_KEY {
 		return utils.MakeResp(-1, "sendkey error")
+	}
+	accessToken, err := getAccessToken()
+	if err != nil {
+		return utils.MakeResp(-1, "get accessToken error")
 	}
 	if err := postWechatMsg(accessToken, msg, msgType); err != nil {
 		return utils.MakeResp(0, err.Error())
