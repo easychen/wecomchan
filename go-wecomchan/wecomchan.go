@@ -5,25 +5,33 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-							   
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"reflect"
 	"time"
 
 	"github.com/go-redis/redis/v8"
 )
 
-var SENDKEY string = "set_a_sendkey"
-var WECOM_CID string = "企业微信公司ID"
-var WECOM_SECRET string = "企业微信应用Secret"
-var WECOM_AID string = "企业微信应用ID"
-var WECOM_TOUID string = "@all"
-
-var REDIS_ADDR string = "localhost:6379"
+var SENDKEY string = GetEnvDefault("SENDKEY", "set_a_sendkey")
+var WECOM_CID string = GetEnvDefault("WECOM_CID", "企业微信公司ID")
+var WECOM_SECRET string = GetEnvDefault("WECOM_SECRET", "企业微信应用Secret")
+var WECOM_AID string = GetEnvDefault("WECOM_AID", "企业微信应用ID")
+var WECOM_TOUID string = GetEnvDefault("WECOM_TOUID", "@all")
+var REDIS_ADDR string = GetEnvDefault("REDIS_ADDR", "localhost:6379")
+var REDIS_STAT string = GetEnvDefault("REDIS_STAT", "OFF")
+var REDIS_PASSWORD string = GetEnvDefault("REDIS_PASSWORD", "")
 var ctx = context.Background()
-var redis_stat string = "OFF"
+
+func GetEnvDefault(key, defVal string) string {
+	val, ex := os.LookupEnv(key)
+	if !ex {
+		return defVal
+	}
+	return val
+}
 
 func praser_json(json_str string) map[string]interface{} {
 	var wecom_response map[string]interface{}
@@ -53,8 +61,8 @@ func get_token(corpid, app_secret string) string {
 func redis_client() *redis.Client {
 	rdb := redis.NewClient(&redis.Options{
 		Addr:     REDIS_ADDR,
-		Password: "", // no password set
-		DB:       0,  // use default DB
+		Password: REDIS_PASSWORD, // no password set
+		DB:       0,              // use default DB
 	})
 	return rdb
 }
@@ -105,7 +113,7 @@ func IsZero(v interface{}) (bool, error) {
 
 func main() {
 	var access_token string
-	if redis_stat == "ON" {
+	if REDIS_STAT == "ON" {
 		log.Println("从redis获取token")
 		rdb := redis_client()
 		vals, err := rdb.Get(ctx, "access_token").Result()
@@ -135,7 +143,7 @@ func main() {
 		if err != nil {
 			fmt.Printf("%v", err)
 		} else {
-			if ok && redis_stat == "ON" {
+			if ok && REDIS_STAT == "ON" {
 				log.Println("pre to set redis key")
 				rdb := redis_client()
 				set, err := rdb.SetNX(ctx, "access_token", access_token, 7000*time.Second).Result()
