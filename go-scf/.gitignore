@@ -1,0 +1,9 @@
+.vscode/
+main
+msg_notice
+*.exe
+*.zip
+*_test.go
+*.zip
+.DS_Store
+config.yaml
