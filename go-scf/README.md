@@ -1,12 +1,15 @@
 # 腾讯云云函数部署Server酱
 
-本项目是对 [Wecom酱](https://github.com/easychen/wecomchan) 进行的扩展。
+本项目是对 [Wecom酱](https://github.com/easychen/wecomchan) 进行的扩展，可以通过企业微信 OpenAPI 向微信推送消息，实现微信消息提醒。
 
-利用 [腾讯云云函数](https://cloud.tencent.com/product/scf)  ServerLess 的能力，以极低的费用（按量付费，且有大量免费额度）来完成部署，优点：
+利用 [腾讯云云函数](https://cloud.tencent.com/product/scf)  ServerLess 的能力，以极低的费用（按量付费，且有大量免费额度）来完成部署
+
+优点：
 
 - 便宜：说是免费也不过分
+- 简单：不需要购买vps, 也不需要备案, 腾讯云速度有保障.
 - 易搭建：一个可执行二进制文件加一个配置文件，直接上传至腾讯云函数控制面板即可，虽然使用 Golang 编写，但是搭建无需 Golang 环境
-- Serverless：无服务器，不用自己购买VPS
+- Serverless：无服务器，函数调用完资源会释放
 
 ## 简单介绍
 
@@ -22,12 +25,12 @@
 
 ### 2. 下载编译好的二进制文件，填写配置
 
-下载文件：
+下载文件 [历史版本链接](https://github.com/riba2534/wecomchan/releases)：
 
-- [main](https://github.com/riba2534/wecomchan/releases/download/1.0/main) ：腾讯云云函数，可执行二进制文件
+- [main](https://github.com/riba2534/wecomchan/releases/download/1.1/main) ：腾讯云云函数，可执行二进制文件
 - [config.yaml.example](https://github.com/riba2534/wecomchan/releases/download/1.0/config.yaml.example) ： 示例的配置文件
 
-修改 `config.yaml.example` 中的内容，先把文件名改为 `config.yaml`，在对应位置填入相关配置，企业微信相关配置，请参考项目主页获取。
+修改 `config.yaml.example` 中的内容，**先把文件名改为 `config.yaml`**，在对应位置填入相关配置，企业微信相关配置，请参考项目主页获取。
 
 配置中的 `FUNC_NAME` 指下一步在腾讯云创建云函数时的函数名称，推荐填 `wecomchan`
 
@@ -76,6 +79,8 @@ config:
 
 在你刚才获得的路径之后拼几个GET参数，在后面加上：`?sendkey=你配置的sendkey&msg_type=text&msg=hello`
 
+> 当发送的文本中存在有换行符或其他字符时，请把 msg 参数进行 url 编码
+
 ![image-20210705015727720](https://image-1252109614.cos.ap-beijing.myqcloud.com/img/image-20210705015727720.png)
 
 可以看见返回 success 字样。
@@ -88,5 +93,5 @@ config:
 
 ---
 
-如果发现bug，或者对本文档有任何建议，欢迎联系 `riba2534@qq.com`
+如果发现bug，或者对本项目有任何建议，欢迎联系 `riba2534@qq.com` 或者直接提 [Issue](https://github.com/riba2534/wecomchan/issues).
 

@@ -11,12 +11,13 @@ import (
 
 	jsoniter "github.com/json-iterator/go"
 	"github.com/riba2534/wecomchan/go-scf/consts"
+	"github.com/riba2534/wecomchan/go-scf/dal"
 	"github.com/riba2534/wecomchan/go-scf/model"
 	"github.com/riba2534/wecomchan/go-scf/utils"
 	"github.com/tencentyun/scf-go-lib/events"
 )
 
-func WeComChanService(ctx context.Context, event events.APIGatewayRequest) interface{} {
+func WeComChanService(ctx context.Context, event events.APIGatewayRequest) map[string]interface{} {
 	sendKey := getQuery("sendkey", event.QueryString)
 	msgType := getQuery("msg_type", event.QueryString)
 	msg := getQuery("msg", event.QueryString)
@@ -26,38 +27,10 @@ func WeComChanService(ctx context.Context, event events.APIGatewayRequest) inter
 	if sendKey != consts.SEND_KEY {
 		return utils.MakeResp(-1, "sendkey error")
 	}
-	accessToken, err := getAccessToken()
-	if err != nil {
-		return utils.MakeResp(-1, "get accessToken error")
-	}
-	if err := postWechatMsg(accessToken, msg, msgType); err != nil {
+	if err := postWechatMsg(dal.AccessToken, msg, msgType); err != nil {
 		return utils.MakeResp(0, err.Error())
 	}
 	return utils.MakeResp(0, "success")
-}
-
-func getAccessToken() (string, error) {
-	client := http.Client{Timeout: 10 * time.Second}
-	req, _ := http.NewRequest("GET", fmt.Sprintf(consts.WeComAccessTokenURL, consts.WECOM_CID, consts.WECOM_SECRET), nil)
-	resp, err := client.Do(req)
-	if err != nil {
-		fmt.Println("getAccessToken err=", err)
-	}
-	defer resp.Body.Close()
-	if resp.StatusCode != 200 {
-		fmt.Println("getAccessToken statusCode is not 200")
-	}
-	respBodyBytes, _ := ioutil.ReadAll(resp.Body)
-	assesTokenResp := &model.AssesTokenResp{}
-	if err := jsoniter.Unmarshal(respBodyBytes, assesTokenResp); err != nil {
-		fmt.Println("getAccessToken json Unmarshal failed, err=", err)
-		return "", err
-	}
-	if assesTokenResp.Errcode != 0 {
-		fmt.Println("getAccessToken assesTokenResp.Errcode != 0, err=", assesTokenResp.Errmsg)
-		return "", errors.New(assesTokenResp.Errmsg)
-	}
-	return assesTokenResp.AccessToken, nil
 }
 
 func postWechatMsg(accessToken, msg, msgType string) error {
