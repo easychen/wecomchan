@@ -25,12 +25,12 @@
 
 ### 2. 下载编译好的二进制文件，填写配置
 
-下载文件：
+下载文件 [历史版本链接](https://github.com/riba2534/wecomchan/releases)：
 
-- [main](https://github.com/riba2534/wecomchan/releases/download/1.0/main) ：腾讯云云函数，可执行二进制文件
+- [main](https://github.com/riba2534/wecomchan/releases/download/1.1/main) ：腾讯云云函数，可执行二进制文件
 - [config.yaml.example](https://github.com/riba2534/wecomchan/releases/download/1.0/config.yaml.example) ： 示例的配置文件
 
-修改 `config.yaml.example` 中的内容，先把文件名改为 `config.yaml`，在对应位置填入相关配置，企业微信相关配置，请参考项目主页获取。
+修改 `config.yaml.example` 中的内容，**先把文件名改为 `config.yaml`**，在对应位置填入相关配置，企业微信相关配置，请参考项目主页获取。
 
 配置中的 `FUNC_NAME` 指下一步在腾讯云创建云函数时的函数名称，推荐填 `wecomchan`
 
@@ -78,6 +78,8 @@ config:
 ## 测试是否成功
 
 在你刚才获得的路径之后拼几个GET参数，在后面加上：`?sendkey=你配置的sendkey&msg_type=text&msg=hello`
+
+> 当发送的文本中存在有换行符或其他字符时，请把 msg 参数进行 url 编码
 
 ![image-20210705015727720](https://image-1252109614.cos.ap-beijing.myqcloud.com/img/image-20210705015727720.png)
 
