@@ -1,12 +1,15 @@
 # 腾讯云云函数部署Server酱
 
-本项目是对 [Wecom酱](https://github.com/easychen/wecomchan) 进行的扩展。
+本项目是对 [Wecom酱](https://github.com/easychen/wecomchan) 进行的扩展，可以通过企业微信 OpenAPI 向微信推送消息，实现微信消息提醒。
 
-利用 [腾讯云云函数](https://cloud.tencent.com/product/scf)  ServerLess 的能力，以极低的费用（按量付费，且有大量免费额度）来完成部署，优点：
+利用 [腾讯云云函数](https://cloud.tencent.com/product/scf)  ServerLess 的能力，以极低的费用（按量付费，且有大量免费额度）来完成部署
+
+优点：
 
 - 便宜：说是免费也不过分
+- 简单：不需要购买vps, 也不需要备案, 腾讯云速度有保障.
 - 易搭建：一个可执行二进制文件加一个配置文件，直接上传至腾讯云函数控制面板即可，虽然使用 Golang 编写，但是搭建无需 Golang 环境
-- Serverless：无服务器，不用自己购买VPS
+- Serverless：无服务器，函数调用完资源会释放
 
 ## 简单介绍
 
@@ -88,5 +91,5 @@ config:
 
 ---
 
-如果发现bug，或者对本文档有任何建议，欢迎联系 `riba2534@qq.com`
+如果发现bug，或者对本项目有任何建议，欢迎联系 `riba2534@qq.com` 或者直接提 [Issue](https://github.com/riba2534/wecomchan/issues).
 
