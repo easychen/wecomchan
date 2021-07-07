@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/riba2534/wecomchan/go-scf/consts"
+	"github.com/riba2534/wecomchan/go-scf/dal"
 	"github.com/riba2534/wecomchan/go-scf/service"
 	"github.com/riba2534/wecomchan/go-scf/utils"
 	"github.com/spf13/cast"
@@ -28,12 +29,17 @@ func init() {
 	consts.WECOM_SECRET = cast.ToString(config.Get("config.WECOM_SECRET"))
 	consts.WECOM_AID = cast.ToString(config.Get("config.WECOM_AID"))
 	consts.WECOM_TOUID = cast.ToString(config.Get("config.WECOM_TOUID"))
+	if consts.FUNC_NAME == "" || consts.SEND_KEY == "" || consts.WECOM_CID == "" ||
+		consts.WECOM_SECRET == "" || consts.WECOM_AID == "" || consts.WECOM_TOUID == "" {
+		fmt.Println("config.yaml is None, please check")
+		panic("config.yaml param error")
+	}
 	fmt.Println("config.yaml load success!")
 }
 
 func HTTPHandler(ctx context.Context, event events.APIGatewayRequest) (events.APIGatewayResponse, error) {
 	path := event.Path
-	fmt.Println("req:", utils.MarshalToStringParam(event))
+	fmt.Println("req->", utils.MarshalToStringParam(event))
 	var result interface{}
 	if strings.HasPrefix(path, "/"+consts.FUNC_NAME) {
 		result = service.WeComChanService(ctx, event)
@@ -50,5 +56,6 @@ func HTTPHandler(ctx context.Context, event events.APIGatewayRequest) (events.AP
 }
 
 func main() {
+	dal.Init()
 	cloudfunction.Start(HTTPHandler)
 }

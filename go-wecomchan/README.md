@@ -1,5 +1,13 @@
 # go-wecomchan 
 
+## what's new
+
+添加 Dockerfile.architecture 使用docker buildx支持构建多架构镜像。
+
+关于docker buildx build 使用方式参考官方文档:
+
+[https://docs.docker.com/engine/reference/commandline/buildx_build/](https://docs.docker.com/engine/reference/commandline/buildx_build/)
+
 ## 配置说明
 
 直接使用和构建二进制文件使用需要golang环境，并且网络可以安装依赖。  
@@ -30,6 +38,7 @@ var REDIS_PASSWORD string = GetEnvDefault("REDIS_PASSWORD", "")
 `go run .`
 
 ## build命令构建二进制文件使用
+
 1. 构建命令
 `go build`
 
@@ -94,3 +103,4 @@ docker run -dit -e SENDKEY=set_a_sendkey \
 * [x] Dockerfile 打包镜像(不依赖网络环境)
 * [x] 通过环境变量传递企业微信id，secret等，镜像一次构建多次使用
 * [x] docker-compose redis + go-wecomchan 一键部署
+
