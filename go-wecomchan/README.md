@@ -103,3 +103,4 @@ docker run -dit -e SENDKEY=set_a_sendkey \
 * [x] Dockerfile 打包镜像(不依赖网络环境)
 * [x] 通过环境变量传递企业微信id，secret等，镜像一次构建多次使用
 * [x] docker-compose redis + go-wecomchan 一键部署
+
