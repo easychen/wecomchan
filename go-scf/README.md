@@ -95,7 +95,7 @@
 
 ### 给指定成员推送消息：
 
-如果你的需求是给企业微信中的指定成员发送消息，则在 GET 请求中多加一个参数 `to_user`，值为 成员ID列表，如果想指定多个成员，则多个成员ID之间用 `|` 隔开。如请求：`https://xxxxx/wecomchan?sendkey=123456&msg_type=text&msg=测试消息&to_user=User1|User2` ，也能收到消息。
+如果你的需求是给企业微信中的指定成员发送消息而不是所有成员，则在 GET 请求中多加一个参数 `to_user`，值为 成员ID列表，如果想指定多个成员，则多个成员ID之间用 `|` 隔开。如请求：`https://xxxxx/wecomchan?sendkey=123456&msg_type=text&msg=测试消息&to_user=User1|User2` ，也能收到消息。
 
 ![image-20210707211125345](https://image-1252109614.cos.ap-beijing.myqcloud.com/img/image-20210707211125345.png)
 
