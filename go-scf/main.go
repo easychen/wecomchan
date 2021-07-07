@@ -9,32 +9,23 @@ import (
 	"github.com/riba2534/wecomchan/go-scf/dal"
 	"github.com/riba2534/wecomchan/go-scf/service"
 	"github.com/riba2534/wecomchan/go-scf/utils"
-	"github.com/spf13/cast"
-	"github.com/spf13/viper"
 	"github.com/tencentyun/scf-go-lib/cloudfunction"
 	"github.com/tencentyun/scf-go-lib/events"
 )
 
 func init() {
-	config := viper.New()
-	config.SetConfigFile("config.yaml")
-	config.AddConfigPath(".")
-	err := config.ReadInConfig()
-	if err != nil {
-		panic("load config.yaml failed")
-	}
-	consts.FUNC_NAME = cast.ToString(config.Get("config.FUNC_NAME"))
-	consts.SEND_KEY = cast.ToString(config.Get("config.SEND_KEY"))
-	consts.WECOM_CID = cast.ToString(config.Get("config.WECOM_CID"))
-	consts.WECOM_SECRET = cast.ToString(config.Get("config.WECOM_SECRET"))
-	consts.WECOM_AID = cast.ToString(config.Get("config.WECOM_AID"))
-	consts.WECOM_TOUID = cast.ToString(config.Get("config.WECOM_TOUID"))
+	consts.FUNC_NAME = utils.GetEnvDefault("FUNC_NAME", "")
+	consts.SEND_KEY = utils.GetEnvDefault("SEND_KEY", "")
+	consts.WECOM_CID = utils.GetEnvDefault("WECOM_CID", "")
+	consts.WECOM_SECRET = utils.GetEnvDefault("WECOM_SECRET", "")
+	consts.WECOM_AID = utils.GetEnvDefault("WECOM_AID", "")
+	consts.WECOM_TOUID = utils.GetEnvDefault("WECOM_TOUID", "@all")
 	if consts.FUNC_NAME == "" || consts.SEND_KEY == "" || consts.WECOM_CID == "" ||
 		consts.WECOM_SECRET == "" || consts.WECOM_AID == "" || consts.WECOM_TOUID == "" {
-		fmt.Println("config.yaml is None, please check")
-		panic("config.yaml param error")
+		fmt.Printf("os.env load Fail, please check your os env.\nFUNC_NAME=%s\nSEND_KEY=%s\nWECOM_CID=%s\nWECOM_SECRET=%s\nWECOM_AID=%s\nWECOM_TOUID=%s\n", consts.FUNC_NAME, consts.SEND_KEY, consts.WECOM_CID, consts.WECOM_SECRET, consts.WECOM_AID, consts.WECOM_TOUID)
+		panic("os.env param error")
 	}
-	fmt.Println("config.yaml load success!")
+	fmt.Println("os.env load success!")
 }
 
 func HTTPHandler(ctx context.Context, event events.APIGatewayRequest) (events.APIGatewayResponse, error) {
