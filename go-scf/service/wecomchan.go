@@ -27,15 +27,19 @@ func WeComChanService(ctx context.Context, event events.APIGatewayRequest) map[s
 	if sendKey != consts.SEND_KEY {
 		return utils.MakeResp(-1, "sendkey error")
 	}
-	if err := postWechatMsg(dal.AccessToken, msg, msgType); err != nil {
+	toUser := getQuery("to_user", event.QueryString)
+	if toUser == "" {
+		toUser = consts.WECOM_TOUID
+	}
+	if err := postWechatMsg(dal.AccessToken, msg, msgType, toUser); err != nil {
 		return utils.MakeResp(0, err.Error())
 	}
 	return utils.MakeResp(0, "success")
 }
 
-func postWechatMsg(accessToken, msg, msgType string) error {
+func postWechatMsg(accessToken, msg, msgType, toUser string) error {
 	content := &model.WechatMsg{
-		ToUser:                 consts.WECOM_TOUID,
+		ToUser:                 toUser,
 		AgentId:                consts.WECOM_AID,
 		MsgType:                msgType,
 		DuplicateCheckInterval: 600,
