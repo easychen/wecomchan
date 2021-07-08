@@ -1,7 +1,0 @@
-config:
-  FUNC_NAME: 函数名称
-  SEND_KEY: 这里写你设置的send_key
-  WECOM_CID: 企业微信公司ID
-  WECOM_SECRET: 企业微信应用Secret
-  WECOM_AID: 企业微信应用ID
-  WECOM_TOUID: "@all" # 别改
