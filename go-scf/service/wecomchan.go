@@ -18,16 +18,16 @@ import (
 )
 
 func WeComChanService(ctx context.Context, event events.APIGatewayRequest) map[string]interface{} {
-	sendKey := getQuery("sendkey", event.QueryString)
-	msgType := getQuery("msg_type", event.QueryString)
-	msg := getQuery("msg", event.QueryString)
+	sendKey := getQuery("sendkey", event)
+	msgType := getQuery("msg_type", event)
+	msg := getQuery("msg", event)
 	if msgType == "" || msg == "" {
 		return utils.MakeResp(-1, "param error")
 	}
 	if sendKey != consts.SEND_KEY {
 		return utils.MakeResp(-1, "sendkey error")
 	}
-	toUser := getQuery("to_user", event.QueryString)
+	toUser := getQuery("to_user", event)
 	if toUser == "" {
 		toUser = consts.WECOM_TOUID
 	}
@@ -74,10 +74,17 @@ func postWechatMsg(accessToken, msg, msgType, toUser string) error {
 	return nil
 }
 
-func getQuery(key string, query events.APIGatewayQueryString) string {
-	value := query[key]
-	if len(value) > 0 && value[0] != "" {
-		return value[0]
+func getQuery(key string, event events.APIGatewayRequest) string {
+	switch event.Method {
+	case "GET":
+		value := event.QueryString[key]
+		if len(value) > 0 && value[0] != "" {
+			return value[0]
+		}
+		return ""
+	case "POST":
+		return jsoniter.Get([]byte(event.Body), key).ToString()
+	default:
+		return ""
 	}
-	return ""
 }
