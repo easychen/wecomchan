@@ -59,7 +59,7 @@ function send_to_wecom($text, $wecom_cid, $wecom_secret, $wecom_aid, $wecom_toui
         $data->touser = $wecom_touid;
         $data->agentid = $wecom_aid;
         $data->msgtype = "text";
-        $data->text = ["content"=> $text];
+        $data->text = ["content"=> str_replace('\n',"\n",$text) ]; //允许使用\n换行（%5Cn）
         $data->duplicate_check_interval = 600;
 
         $data_json = json_encode($data);
