@@ -36,7 +36,7 @@ PS：消息接口无需认证即可使用，个人用微信就可以注册
 
 ![](https://theseven.ftqq.com/20210208143228.png)
 
-应用名称填入「Server酱」，应用logo到[这里](https://theseven.ftqq.com/20210208142819.png)下载，可见范围选择公司名。
+应用名称填入「Server酱」，应用logo到[这里](./20210208142819.png)下载，可见范围选择公司名。
 
 
 ![](https://theseven.ftqq.com/20210208143327.png)
