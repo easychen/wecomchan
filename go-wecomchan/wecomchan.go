@@ -221,7 +221,6 @@ func InitJsonData(msgType string) JsonData {
 func main() {
 	// 设置日志内容显示文件名和行号
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
-	accessToken := getAccessToken()
 	wecomChan := func(res http.ResponseWriter, req *http.Request) {
 		_ = req.ParseForm()
 		sendkey := req.FormValue("sendkey")
@@ -231,6 +230,8 @@ func main() {
 		msgContent := req.FormValue("msg")
 		msgType := req.FormValue("msg_type")
 		log.Println("mes_type=", msgType)
+		// 刷新token
+		accessToken := getAccessToken()
 		mediaId := CheckOrUploadMedia(msgType, req, accessToken)
 		log.Println("企业微信上传临时素材接口返回的media_id==>", mediaId)
 
@@ -242,6 +243,8 @@ func main() {
 		postData.Image = Pic{
 			MediaId: mediaId,
 		}
+		// 再次刷新token
+		accessToken = getAccessToken()
 		sendMessageUrl := fmt.Sprintf(SendMessageApi, accessToken)
 
 		postStatus := PostMsg(postData, sendMessageUrl)
