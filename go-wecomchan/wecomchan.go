@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"math"
 	"mime/multipart"
 	"net/http"
 	"os"
@@ -37,6 +38,8 @@ var SendMessageApi = "https://qyapi.weixin.qq.com/cgi-bin/message/send?access_to
 var UploadMediaApi = "https://qyapi.weixin.qq.com/cgi-bin/media/upload?access_token=%s&type=%s"
 
 /*-------------------------------  企业微信服务端API end  -------------------------------*/
+
+const RedisTokenKey = "access_token"
 
 type Msg struct {
 	Content string `json:"content"`
@@ -89,13 +92,13 @@ func GetRemoteToken(corpId, appSecret string) string {
 	}
 	tokenResponse := ParseJson(string(respData))
 	log.Println("企业微信获取access_token接口返回==>", tokenResponse)
-	accessToken := tokenResponse["access_token"].(string)
+	accessToken := tokenResponse[RedisTokenKey].(string)
 
 	if RedisStat == "ON" {
 		log.Println("prepare to set redis key")
 		rdb := RedisClient()
 		// access_token有效时间为7200秒(2小时)
-		set, err := rdb.SetNX(ctx, "access_token", accessToken, 7000*time.Second).Result()
+		set, err := rdb.SetNX(ctx, RedisTokenKey, accessToken, 7000*time.Second).Result()
 		log.Println(set)
 		if err != nil {
 			log.Println(err)
@@ -136,20 +139,16 @@ func PostMsg(postData JsonData, postUrl string) string {
 	return string(body)
 }
 
-// CheckOrUploadMedia  核对消息类型，如果为图片则上传临时素材并返回mediaId
-func CheckOrUploadMedia(msgType string, req *http.Request, accessToken string) string {
-	if msgType != "image" {
-		log.Println("消息类型不是图片")
-		return ""
-	}
-
+// UploadMedia  上传临时素材并返回mediaId
+func UploadMedia(msgType string, req *http.Request, accessToken string) (string, float64) {
 	// 企业微信图片上传不能大于2M
 	_ = req.ParseMultipartForm(2 << 20)
 	imgFile, imgHeader, err := req.FormFile("media")
 	log.Printf("文件大小==>%d字节", imgHeader.Size)
 	if err != nil {
 		log.Fatalln("图片文件出错==>", err)
-		return ""
+		// 自定义code无效的图片文件
+		return "", 400
 	}
 	buf := new(bytes.Buffer)
 	writer := multipart.NewWriter(buf)
@@ -171,28 +170,44 @@ func CheckOrUploadMedia(msgType string, req *http.Request, accessToken string) s
 	log.Println("企业微信上传临时素材接口返回==>", mediaResp)
 	if err != nil {
 		log.Fatalln("上传临时素材出错==>", err)
-		return ""
+		return "", mediaResp["errcode"].(float64)
 	} else {
-		return mediaResp["media_id"].(string)
+		return mediaResp["media_id"].(string), float64(0)
 	}
 }
 
-// IsZero 判断企业微信服务端是否正常响应
-func IsZero(v interface{}) (bool, error) {
-	t := reflect.TypeOf(v)
-	if !t.Comparable() {
-		return false, fmt.Errorf("type is not comparable: %v", t)
+// ValidateToken 判断accessToken是否失效
+// true-未失效, false-失效需重新获取
+func ValidateToken(errcode interface{}) bool {
+	codeTyp := reflect.TypeOf(errcode)
+	log.Println("errcode的数据类型==>", codeTyp)
+	if !codeTyp.Comparable() {
+		log.Printf("type is not comparable: %v", codeTyp)
+		return true
 	}
-	return v == reflect.Zero(t).Interface(), nil
+
+	// 如果errcode为42001表明token已失效，则清空redis中的token缓存
+	// 已知codeType为float64
+	if math.Abs(errcode.(float64)-float64(42001)) < 1e-3 {
+		if RedisStat == "ON" {
+			log.Printf("token已失效，开始删除redis中的key==>%s", RedisTokenKey)
+			rdb := RedisClient()
+			rdb.Del(ctx, RedisTokenKey)
+			log.Printf("删除redis中的key==>%s完毕", RedisTokenKey)
+		}
+		log.Println("现需重新获取token")
+		return false
+	}
+	return true
 }
 
-// 获取企业微信的access_token
-func getAccessToken() string {
+// GetAccessToken 获取企业微信的access_token
+func GetAccessToken() string {
 	accessToken := ""
 	if RedisStat == "ON" {
 		log.Println("尝试从redis获取token")
 		rdb := RedisClient()
-		value, err := rdb.Get(ctx, "access_token").Result()
+		value, err := rdb.Get(ctx, RedisTokenKey).Result()
 		if err == redis.Nil {
 			log.Println("access_token does not exist, need get it from remote API")
 		}
@@ -222,6 +237,11 @@ func main() {
 	// 设置日志内容显示文件名和行号
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 	wecomChan := func(res http.ResponseWriter, req *http.Request) {
+		// 获取token
+		accessToken := GetAccessToken()
+		// 默认token有效
+		tokenValid := true
+
 		_ = req.ParseForm()
 		sendkey := req.FormValue("sendkey")
 		if sendkey != Sendkey {
@@ -230,10 +250,24 @@ func main() {
 		msgContent := req.FormValue("msg")
 		msgType := req.FormValue("msg_type")
 		log.Println("mes_type=", msgType)
-		// 刷新token
-		accessToken := getAccessToken()
-		mediaId := CheckOrUploadMedia(msgType, req, accessToken)
-		log.Println("企业微信上传临时素材接口返回的media_id==>", mediaId)
+		// 默认mediaId为空
+		mediaId := ""
+		if msgType != "image" {
+			log.Println("消息类型不是图片")
+		} else {
+			// token有效则跳出循环继续执行，否则重试3次
+			for i := 0; i <= 3; i++ {
+				var errcode float64
+				mediaId, errcode = UploadMedia(msgType, req, accessToken)
+				log.Printf("企业微信上传临时素材接口返回的media_id==>[%s], errcode==>[%f]\n", mediaId, errcode)
+				tokenValid = ValidateToken(errcode)
+				if tokenValid {
+					break
+				}
+
+				accessToken = GetAccessToken()
+			}
+		}
 
 		// 准备发送应用消息所需参数
 		postData := InitJsonData(msgType)
@@ -243,17 +277,23 @@ func main() {
 		postData.Image = Pic{
 			MediaId: mediaId,
 		}
-		// 再次刷新token
-		accessToken = getAccessToken()
-		sendMessageUrl := fmt.Sprintf(SendMessageApi, accessToken)
 
-		postStatus := PostMsg(postData, sendMessageUrl)
-		postResponse := ParseJson(postStatus)
-		errcode := postResponse["errcode"]
-		_, err := IsZero(errcode)
-		if err != nil {
-			log.Printf("%v", err)
+		postStatus := ""
+		for i := 0; i <= 3; i++ {
+			sendMessageUrl := fmt.Sprintf(SendMessageApi, accessToken)
+			postStatus = PostMsg(postData, sendMessageUrl)
+			postResponse := ParseJson(postStatus)
+			errcode := postResponse["errcode"]
+			log.Println("发送应用消息接口返回errcode==>", errcode)
+			tokenValid = ValidateToken(errcode)
+			// token有效则跳出循环继续执行，否则重试3次
+			if tokenValid {
+				break
+			}
+			// 刷新token
+			accessToken = GetAccessToken()
 		}
+
 		res.Header().Set("Content-type", "application/json")
 		_, _ = res.Write([]byte(postStatus))
 	}
