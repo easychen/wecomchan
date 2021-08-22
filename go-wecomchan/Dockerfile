@@ -1,5 +1,8 @@
 FROM golang:1.16.5-alpine3.13 as gobuilder
 
+# 替换为国内源
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories
+
 ENV GO111MODULE="on"
 ENV GOPROXY="https://goproxy.cn,direct"
 ENV CGO_ENABLED=0
