@@ -48,8 +48,10 @@ var RedisPassword = GetEnvDefault("REDIS_PASSWORD", "")
 
 新增打包好的镜像可以直接使用
 
-- v1_推送文本:`docker pull aozakiaoko/go-wecomchan`  
-Docker Hub 地址为:[https://hub.docker.com/r/aozakiaoko/go-wecomchan](https://hub.docker.com/r/aozakiaoko/go-wecomchan)
+- 推送文本or图片:`docker pull aozakiaoko/go-wecomchan`  
+Docker Hub 地址为:[https://hub.docker.com/r/aozakiaoko/go-wecomchan](https://hub.docker.com/r/aozakiaoko/go-wecomchan)  
+
+已经更新latest镜像为 @fcbhank 的最新代码，并支持arm64设备。也可通过aozakiaoko/go-wecomchan:v2 获取最新镜像。
 
 - v2_推送文本or图片:`docker pull fcbhank/go-wecomchan`
 Docker Hub 地址为:[https://hub.docker.com/r/fcbhank/go-wecomchan](https://hub.docker.com/r/fcbhank/go-wecomchan)
@@ -71,7 +73,7 @@ docker run -dit -e SENDKEY=set_a_sendkey \
 -e REDIS_STAT=ON \
 -e REDIS_ADDR="localhost:6379" \
 -e REDIS_PASSWORD="" \
-# v1 aozakiaoko/go-wecomchan
+# aozakiaoko/go-wecomchan 已经更新镜像为 @fcbhank 的最新代码，并支持arm64设备。
 # v2 fcbhank/go-wecomchan
 -p 8080:8080 go-wecomchan
 ```
@@ -117,4 +119,3 @@ curl --location --request POST 'http://localhost:8080/wecomchan?sendkey={你的s
 * [x] Dockerfile 打包镜像(不依赖网络环境)
 * [x] 通过环境变量传递企业微信id，secret等，镜像一次构建多次使用
 * [x] docker-compose redis + go-wecomchan 一键部署
-
