@@ -15,6 +15,7 @@ import (
 	"time"
 
 	"github.com/go-redis/redis/v8"
+	"github.com/julienschmidt/httprouter"
 )
 
 /*-------------------------------  环境变量配置 begin  -------------------------------*/
@@ -236,22 +237,29 @@ func InitJsonData(msgType string) JsonData {
 func main() {
 	// 设置日志内容显示文件名和行号
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
-	wecomChan := func(res http.ResponseWriter, req *http.Request) {
+	wecomChan := func(res http.ResponseWriter, req *http.Request, ps httprouter.Params) {
+		_ = req.ParseForm()
+		sendkey := req.Form.Get("sendkey")
+		urlpath := ps.ByName("urlpath")
+		if len(sendkey) == 0 && len(urlpath) > 6 && urlpath != "wecomchan" {
+			sendkey = urlpath[1 : len(urlpath)-5]
+		}
+		if sendkey != Sendkey {
+			log.Panicln("sendkey 错误，请检查")
+		}
+		req.ParseForm()
+		msgContent := req.Form.Get("msg")
+		if len(msgContent) == 0 {
+			msgContent = req.Form.Get("title") + "\n" + req.Form.Get("desc")
+		}
+		msgType := req.Form.Get("msg_type")
+		log.Println("mes_type=", msgType)
+		// 默认mediaId为空
+		mediaId := ""
 		// 获取token
 		accessToken := GetAccessToken()
 		// 默认token有效
 		tokenValid := true
-
-		_ = req.ParseForm()
-		sendkey := req.FormValue("sendkey")
-		if sendkey != Sendkey {
-			log.Panicln("sendkey 错误，请检查")
-		}
-		msgContent := req.FormValue("msg")
-		msgType := req.FormValue("msg_type")
-		log.Println("mes_type=", msgType)
-		// 默认mediaId为空
-		mediaId := ""
 		if msgType != "image" {
 			log.Println("消息类型不是图片")
 		} else {
@@ -297,6 +305,8 @@ func main() {
 		res.Header().Set("Content-type", "application/json")
 		_, _ = res.Write([]byte(postStatus))
 	}
-	http.HandleFunc("/wecomchan", wecomChan)
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	router := httprouter.New()
+	router.GET("/*urlpath", wecomChan)
+	router.POST("/*urlpath", wecomChan)
+	log.Fatal(http.ListenAndServe(":8080", router))
 }
