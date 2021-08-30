@@ -253,6 +253,9 @@ func main() {
 			msgContent = req.Form.Get("title") + "\n" + req.Form.Get("desc")
 		}
 		msgType := req.Form.Get("msg_type")
+		if len(msgType) == 0 {
+			msgType = "text"
+		}
 		log.Println("mes_type=", msgType)
 		// 默认mediaId为空
 		mediaId := ""
