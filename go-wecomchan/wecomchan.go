@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"os"
 	"reflect"
+	"strings"
 	"time"
 
 	"github.com/go-redis/redis/v8"
@@ -250,7 +251,11 @@ func main() {
 		req.ParseForm()
 		msgContent := req.Form.Get("msg")
 		if len(msgContent) == 0 {
-			msgContent = req.Form.Get("title") + "\n" + req.Form.Get("desc")
+			title := req.Form.Get("title")
+			text := req.Form.Get("text")
+			desp := req.Form.Get("desp")
+			msgContent = strings.Join([]string{title, text, desp}, "\n")
+			log.Println("msgContent=", msgContent)
 		}
 		msgType := req.Form.Get("msg_type")
 		if len(msgType) == 0 {
