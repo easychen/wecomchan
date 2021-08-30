@@ -248,7 +248,6 @@ func main() {
 		if sendkey != Sendkey {
 			log.Panicln("sendkey 错误，请检查")
 		}
-		req.ParseForm()
 		msgContent := req.Form.Get("msg")
 		if len(msgContent) == 0 {
 			title := req.Form.Get("title")
