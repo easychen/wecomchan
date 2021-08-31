@@ -250,11 +250,24 @@ func main() {
 		}
 		msgContent := req.Form.Get("msg")
 		if len(msgContent) == 0 {
+			textArray := make([]string, 3)
+			lenOfArr := 0
 			title := req.Form.Get("title")
+			if (len(title)) > 0 {
+				textArray[lenOfArr] = title
+				lenOfArr++
+			}
 			text := req.Form.Get("text")
+			if (len(text)) > 0 {
+				textArray[lenOfArr] = text
+				lenOfArr++
+			}
 			desp := req.Form.Get("desp")
-			msgContent = strings.Join([]string{title, text, desp}, "\n")
-			log.Println("msgContent=", msgContent)
+			if (len(desp)) > 0 {
+				textArray[lenOfArr] = desp
+				lenOfArr++
+			}
+			msgContent = strings.Join(textArray[0:lenOfArr], "\n")
 		}
 		msgType := req.Form.Get("msg_type")
 		if len(msgType) == 0 {
