@@ -268,8 +268,7 @@ namespace WeCom.Demo
 
 其他版本的函数可参照上边的逻辑自行编写，欢迎PR。
 
-
-
+发送图片、卡片、文件或 Markdown 消息的高级用法见 [企业微信API](https://work.weixin.qq.com/api/doc/90000/90135/90236)。
 
 
 
