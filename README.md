@@ -14,7 +14,7 @@
 
 - [Server酱Turbo](https://sct.ftqq.com)：支持企业微信、微信服务号、钉钉、飞书群机器人等多通道的在线服务，无需搭建直接使用，每天有免费额度
 - [Wecom酱](https://github.com/easychen/wecomchan)：通过企业微信推送消息到微信的消息推送函数和在线服务方案，开源免费，可自己搭建。支持多语言。
-- [Tele酱](https://github.com/easychen/telechan)：可以通过 Vercel 免费部署，且部署后 API 在国内网络可访问的 Telegram 多账户消息推送机器人
+- [PushDeer](https://github.com/easychen/pushdeer)：可自行搭建的、无需安装APP的开源推送方案。同时也提供安装APP的降级方案给低版本/没有快应用的系统。支持作为Server酱的通道进行推送，所有支持Server酱的软件和插件都能直接整合PushDeer。
 
 ## 企业微信应用消息配置说明
 
