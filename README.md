@@ -8,6 +8,7 @@
    1. [PHP版搭建说明](ONLINE.md) 
    2. [Go版说明](go-wecomchan/README.md)
    3. [腾讯云云函数搭建说明](go-scf/) 
+   4. [阿里云云函数搭建说明](python-aliyunfc/)
 
 ## 🎈 本项目属于方糖推送生态。该生态包含项目如下：
 
