@@ -4,11 +4,12 @@
 
 1. 配置说明（本页下方）
 2. 推送函数（支持多种语言，见本页下方）
-3. 自行搭建的在线服务源码 
+3. 自行搭建的在线服务源码或使用本地库
    1. [PHP版搭建说明](ONLINE.md) 
    2. [Go版说明](go-wecomchan/README.md)
    3. [腾讯云云函数搭建说明](go-scf/) 
    4. [阿里云云函数搭建说明](python-aliyunfc/)
+   5. [无需服务器的 Python 库](https://pypi.org/project/wechat-push/)
 
 ## 🎈 本项目属于方糖推送生态。该生态包含项目如下：
 
