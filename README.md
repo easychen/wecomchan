@@ -8,7 +8,8 @@
    1. [PHP版搭建说明](ONLINE.md) 
    2. [Go版说明](go-wecomchan/README.md)
    3. [阿里云云函数搭建说明](python-aliyunfc/)
-   4. [腾讯云云函数搭建说明](go-scf/) ⚠️ 2022年5月23日起最低月消费9.9，因此不推荐了 
+   4. 「Go适配华为函数工作流版本」(https://github.com/Colo-Thor/wecomchan/releases/tag/2.2)
+   5. [腾讯云云函数搭建说明](go-scf/) ⚠️ 2022年5月23日起最低月消费9.9，因此不推荐了 
 
 ## 🎈 本项目属于方糖推送生态。该生态包含项目如下：
 
