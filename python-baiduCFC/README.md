@@ -52,7 +52,6 @@
 
 ```
 {"key":"123", "msg": "Hello, World!"}
-
 ```
 
 ```
@@ -63,3 +62,10 @@
 {"key":"123", "type": "markdown", "msg": "**Markdown Here!**"}
 ```
 
+```
+{
+    "key": "123",
+    "type": "text",
+    "msg": "文本中支持<a href=\"https://www.baidu.com\">超链接</a>"
+}
+```
