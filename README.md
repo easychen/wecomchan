@@ -4,7 +4,7 @@
 
 1. 配置说明（本页下方）
 2. 推送函数（支持多种语言，见本页下方）
-3. 微信推送支持的消息类型以及关键参数(MessageType.md)
+3. [微信推送支持的消息类型以及关键参数](MessageType.md)
 4. 自行搭建的在线服务源码 
    1. [PHP版搭建说明](ONLINE.md) 
    2. [Go版说明](go-wecomchan/README.md)
