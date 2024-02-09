@@ -1,1 +1,1 @@
-到华为云函数创建python3.9的项目, 名称写WecomPush, 然后复制main.py的内容到华为云函数index.py里, 修改代码中(8, 128-131)对应参数, 之后在触发器里创建APIG网关, 安全认证选None, 仅支持使用params的方式给参数, 不支持通过body, 示例: https://push.example.com/?key=100&msg=hello
+到华为云函数创建python3.9的项目, 名称写WecomPush, 然后复制main.py的内容到华为云函数index.py里, 修改代码中(8, 128-131)对应参数, 之后在触发器里创建APIG网关, 安全认证选None, 仅支持使用params的方式给参数, 不支持通过body, 示例: https://push.example.com/?key=100&msg=hello, 我写的菜, 可以pull.
