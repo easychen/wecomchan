@@ -12,19 +12,29 @@ define('REDIS_ON', false);
 define('REDIS_HOST', '127.0.0.1');
 define('REDIS_PORT', '6379');
 define('REDIS_EXPIRED', '7000');
+define('REDIS_PASSWORD', '');
 define('REDIS_KEY', 'wecom_access_token');
 
 // code
 // ======================================
 
-if (strlen(@$_REQUEST['sendkey'])  < 1
-    || strlen(@$_REQUEST['text'])  < 1 || @$_REQUEST['sendkey'] != SENDKEY
-) {
-    die('bad params');
-}
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (strlen(@$_POST['sendkey']) < 1 || strlen(@$_POST['msg']) < 1 || @$_POST['sendkey'] != SENDKEY) {
+        die('bad params');
+    }
 
-header("Content-Type: application/json; charset=UTF-8");
-echo send_to_wecom(@$_REQUEST['text'], WECOM_CID, WECOM_SECRET, WECOM_AID, WECOM_TOUID);
+    header("Content-Type: application/json; charset=UTF-8");
+    echo send_to_wecom(@$_POST['msg'], WECOM_CID, WECOM_SECRET, WECOM_AID, WECOM_TOUID);
+} elseif ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    if (strlen(@$_GET['sendkey']) < 1 || strlen(@$_GET['msg']) < 1 || @$_GET['sendkey'] != SENDKEY) {
+        die('bad params');
+    }
+
+    header("Content-Type: application/json; charset=UTF-8");
+    echo send_to_wecom(@$_GET['msg'], WECOM_CID, WECOM_SECRET, WECOM_AID, WECOM_TOUID);
+} else {
+    die('Method not supported');
+}
 
 
 function redis()
@@ -32,6 +42,7 @@ function redis()
     if (!isset($GLOBALS['REDIS_INSTANCE']) || !$GLOBALS['REDIS_INSTANCE']) {
         $GLOBALS['REDIS_INSTANCE'] = new Redis();
         $GLOBALS['REDIS_INSTANCE']->connect(REDIS_HOST, REDIS_PORT);
+        $GLOBALS['REDIS_INSTANCE']->auth(REDIS_PASSWORD);
     }
 
     return $GLOBALS['REDIS_INSTANCE'];
