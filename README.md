@@ -8,8 +8,8 @@
    1. [PHP版搭建说明](ONLINE.md) 
    2. [Go版说明](go-wecomchan/README.md)
    3. [Go适配华为函数工作流版本](https://github.com/Colo-Thor/wecomchan/releases/tag/2.2)
-   4. [阿里云云函数搭建说明](python-aliyunfc/)
-   5. [腾讯云云函数搭建说明](go-scf/) ⚠️ 2022年5月23日起最低月消费9.9，因此不推荐了 
+   4. [腾讯云云函数搭建说明](go-scf/) ⚠️ 2022年5月起的最低月消费[已经取消了](https://cloud.tencent.com/document/product/583/104909)
+   5. [阿里云云函数搭建说明](python-aliyunfc/) 
    6. [百度智能云函数搭建说明](python-baiduCFC/)
    7. [Python版华为函数工作流搭建说明](python-huaweiFG/)
 
