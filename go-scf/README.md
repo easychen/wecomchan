@@ -1,6 +1,6 @@
 # 腾讯云云函数部署Server酱📣
 
-## 注意：腾讯云函数从2022年5月23日起不再有免费额度，最低需要9.9元/月才能使用
+> 腾讯云函数2022年5月23日起的月最低消费[已经取消了](https://cloud.tencent.com/document/product/583/104909) 
 
 本项目是对 [Wecom酱](https://github.com/easychen/wecomchan) 进行的扩展，可以通过企业微信 OpenAPI 向微信推送消息，实现微信消息提醒。
 
