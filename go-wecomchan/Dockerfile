@@ -1,4 +1,4 @@
-FROM golang:1.16.5-alpine3.13 as gobuilder
+FROM golang:1.16.5-alpine3.13 AS gobuilder
 
 # 替换为国内源
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories
